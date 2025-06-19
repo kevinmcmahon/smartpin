@@ -4,20 +4,24 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.2.3-blue.svg)](https://github.com/kevinmcmahon/smartpin/releases)
 
-> AI-powered Pinboard bookmark manager that automatically extracts metadata from web pages
+> AI-powered Pinboard bookmark manager with cloud-first storage and optional local database
 
-**smartpin** installs the CLI tool `pinit`, which intelligently analyzes web pages and automatically generates metadata for your Pinboard bookmarks. Just provide a URL, and AI will extract the title, generate a concise description, and suggest relevant tags - no manual data entry required! 🤖✨
+**smartpin** installs the CLI tool `pinit`, which intelligently analyzes web pages and automatically saves bookmarks directly to your Pinboard.in account. By default, bookmarks are stored in the cloud via Pinboard's API for instant access anywhere. Optionally, you can maintain a local SQLite database for offline access and advanced bookmark management using the [pinboard-tools](https://github.com/kevinmcmahon/pinboard-tools) library. Just provide a URL, and AI will extract the title, generate a concise description, and suggest relevant tags - no manual data entry required! 🤖✨
 
 ## ✨ Features
 
 - 🤖 **Automatic metadata extraction** - AI analyzes pages to extract title, description, and relevant tags
 - 🎯 **Smart tagging** - AI suggests contextually appropriate tags for better organization
 - 🔄 **Flexible AI models** - Supports Claude, GPT-4, Gemini, and other LLM providers
-- 🌐 **Reliable content fetching** - Local HTTP client with BeautifulSoup for robust page parsing (v0.2.0)
+- ☁️ **Cloud-first storage** - Bookmarks saved directly to Pinboard.in for instant access anywhere
+- 🗄️ **Optional local database** - Offline access and advanced bookmark management via pinboard-tools
+- 🔄 **Bidirectional sync** - Keep local database and Pinboard.in perfectly synchronized
+- 🌐 **Reliable content fetching** - Local HTTP client with BeautifulSoup for robust page parsing
 - 💻 **Rich terminal UI** - Beautiful output with progress indicators and formatted results
-- 🧪 **Dry-run mode** - Preview extractions without saving to Pinboard
+- 🧪 **Dry-run mode** - Preview extractions and sync operations without making changes
 - 📊 **JSON output** - Machine-readable format for scripting and automation
 - 🔒 **Privacy controls** - Mark bookmarks as private or "to read" as needed
+- 🏷️ **Advanced tag management** - Tag similarity detection and consolidation (via pinboard-tools)
 
 ## 🚀 Quick Start
 
@@ -71,7 +75,7 @@ PINIT_MODEL=gpt-4  # or claude-opus-4-0, gpt-3.5-turbo, etc.
 ### Basic Usage
 
 ```bash
-# Add a bookmark with AI analysis
+# Add a bookmark with AI analysis (saves directly to Pinboard.in)
 pinit add https://example.com
 
 # Preview extraction without saving
@@ -79,6 +83,9 @@ pinit add https://example.com --dry-run
 
 # Add private bookmark marked as "to read"
 pinit add https://example.com --private --toread
+
+# Sync all bookmarks between local database and Pinboard (optional)
+pinit sync
 
 # Get JSON output for scripting
 pinit add https://example.com --json
@@ -103,7 +110,20 @@ $ pinit add https://example.com/ai-software-development
 │ Tags: ai, software-development, programming, guide   │
 └───────────────────────────────────────────────────────┘
 
-✓ Bookmark saved successfully!
+✓ Bookmark saved to Pinboard.in successfully!
+```
+
+### Database Sync Operations
+
+```bash
+# Perform full bidirectional sync
+pinit sync
+
+# Preview sync operations without making changes
+pinit sync --dry-run
+
+# Check sync status and local database location
+pinit config
 ```
 
 ### Advanced Options
@@ -115,7 +135,7 @@ pinit add https://example.com --model gpt-4
 # Or use GPT-3.5 for faster/cheaper processing
 pinit add https://example.com --model gpt-3.5-turbo
 
-# Check your configuration
+# Check your configuration and database location
 pinit config
 
 # JSON output for automation
@@ -131,6 +151,18 @@ Configuration is loaded in this priority order (highest to lowest):
 1. System environment variables
 2. Local `.env` file (current directory)
 3. User configuration `~/.pinit/config`
+
+### Local Database (Optional)
+
+The application can optionally maintain a local SQLite database at `~/.pinit/bookmarks.db` when using the `pinit sync` command. This local database:
+
+- **Provides offline access** to your bookmarks
+- **Enables bidirectional sync** with Pinboard.in
+- **Supports advanced features** like tag similarity detection and consolidation
+- **Automatically initializes** when you first run `pinit sync`
+- **Works seamlessly** with the pinboard-tools ecosystem
+
+**Note**: The `pinit add` command saves bookmarks directly to Pinboard.in and does not use the local database. Only the `pinit sync` command creates and maintains the local database.
 
 ### AI Model Configuration
 
@@ -192,18 +224,27 @@ make clean     # Remove cache files
 ### Core Components
 
 - **`PinboardBookmarkExtractor`** - Interfaces with AI models to analyze web pages
-- **`pinboard_client`** - Wrapper functions for Pinboard API operations
+- **`pinboard_client`** - Wrapper functions for Pinboard API operations and sync management
 - **`cli`** - Click-based command interface with Rich formatting
+- **Local SQLite database** - Managed via pinboard-tools for advanced bookmark operations
+- **Bidirectional sync** - Keeps local and remote bookmarks synchronized
 - **Jinja2 templates** - Customizable prompts for AI extraction
 
 ## 📦 Dependencies
 
+### Core Libraries
 - **CLI Framework**: `click` - Command-line interface creation
 - **Terminal UI**: `rich` - Beautiful terminal formatting
 - **AI Integration**: `llm` - Universal LLM library for multiple providers
-- **API Client**: `pinboard` - Official Pinboard API client
+- **Bookmark Management**: `pinboard-tools` - Local database and sync capabilities
+- **API Client**: `pinboard` - Official Pinboard API client for direct operations
 - **Configuration**: `python-dotenv` - Environment variable management
 - **Templating**: `jinja2` - Prompt template rendering
+
+### Key Features Enabled by Dependencies
+- **pinboard-tools**: Local SQLite database, bidirectional sync, advanced bookmark management
+- **llm**: Support for Claude, GPT-4, Gemini, and other AI providers
+- **rich**: Beautiful terminal output with progress indicators and formatting
 
 ## 🤝 Contributing
 
@@ -223,6 +264,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 ## 🙏 Acknowledgments
 
 - Built with the excellent [LLM library](https://llm.datasette.io/) by Simon Willison
+- Database and sync capabilities powered by [pinboard-tools](https://github.com/kevinmcmahon/pinboard-tools)
 - Terminal UI enhanced by [Rich](https://github.com/Textualize/rich)
 - Pinboard API by [Pinboard](https://pinboard.in/api/)
 

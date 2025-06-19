@@ -7,14 +7,13 @@ from pathlib import Path
 
 import click
 import httpx
-import pinboard
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.json import JSON
 from rich.panel import Panel
 
 from .extractor import PinboardBookmarkExtractor
-from .pinboard_client import add_bookmark
+from .pinboard_client import add_bookmark, sync_all_bookmarks
 
 console = Console()
 
@@ -71,7 +70,7 @@ def get_api_token() -> str | None:
 
 
 @click.group()
-@click.version_option()
+@click.version_option(package_name="smartpin")
 def cli() -> None:
     """Pinit - AI-powered Pinboard bookmark manager.
 
@@ -169,10 +168,9 @@ def add(
 
         # Save to Pinboard
         with console.status("[yellow]Saving to Pinboard...[/yellow]"):
-            pb = pinboard.Pinboard(api_token)
             # Apply private and toread flags
             result = add_bookmark(
-                pb=pb,
+                api_token=api_token,
                 url=bookmark["url"],
                 title=bookmark["title"],
                 description=bookmark.get("description", ""),
@@ -296,6 +294,54 @@ def config(init: bool) -> None:
         console.print(
             "\n[yellow]Tip:[/yellow] Run 'pinit config --init' to set up configuration interactively."
         )
+
+
+@cli.command()
+@click.option("--dry-run", is_flag=True, help="Show what would be synced without making changes")
+def sync(dry_run: bool) -> None:
+    """Sync all bookmarks between local database and Pinboard.
+
+    This command uses the pinboard-tools library to maintain a local SQLite
+    database of your bookmarks and performs bidirectional synchronization
+    with Pinboard.in.
+
+    The local database is stored at ~/.pinit/bookmarks.db and allows for
+    advanced features like tag similarity detection and offline access.
+
+    Examples:
+      pinit sync           # Perform full bidirectional sync
+      pinit sync --dry-run # Show what would be synced
+    """
+    try:
+        # Get API token
+        api_token = get_api_token()
+        if not api_token:
+            sys.exit(1)
+
+        # Perform sync
+        with console.status(f"[yellow]Syncing bookmarks{'(dry run)' if dry_run else ''}...[/yellow]"):
+            if dry_run:
+                console.print("[yellow]Dry run mode - sync functionality coming soon[/yellow]")
+                return
+
+            results = sync_all_bookmarks(api_token)
+
+        # Report results
+        if results.get('errors', 0) == 0:
+            console.print("\n[green]✓ Sync completed successfully![/green]")
+            if 'local_to_remote' in results:
+                console.print(f"  Local → Remote: {results['local_to_remote']} bookmarks")
+            if 'remote_to_local' in results:
+                console.print(f"  Remote → Local: {results['remote_to_local']} bookmarks")
+        else:
+            console.print(f"\n[red]✗ Sync completed with {results['errors']} errors[/red]")
+            if 'error_message' in results:
+                console.print(f"[red]Error: {results['error_message']}[/red]")
+            sys.exit(1)
+
+    except Exception as e:
+        console.print(f"[red]Sync failed:[/red] {e}")
+        sys.exit(1)
 
 
 def main() -> None:
