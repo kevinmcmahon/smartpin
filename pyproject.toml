@@ -53,8 +53,7 @@ packages = ["pinit"]
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
- "ruff>=0.11.11",
- "types-click>=7.1.8",
+    "ruff>=0.11.11",
 ]
 
 [tool.ruff]

@@ -203,10 +203,11 @@ def config(init: bool) -> None:
 
     Without --init:
       Displays current API token status, AI model configuration,
-      and locations of configuration files.
+      database location, and configuration file locations.
 
     With --init:
       Creates ~/.pinit/config configuration file interactively.
+      Allows you to set API token, AI model, and database location.
 
     Configuration is loaded in priority order:
     1. System environment variables (highest priority)
@@ -242,12 +243,22 @@ def config(init: bool) -> None:
         console.print("[dim]Default: anthropic/claude-sonnet-4-0[/dim]")
         model = click.prompt("PINIT_MODEL", default="", show_default=False)
 
+        # Optionally get database path
+        console.print("\nOptionally, specify database location (press Enter for default).")
+        default_db_path = str(config_dir / "bookmarks.db")
+        console.print(f"[dim]Default: {default_db_path}[/dim]")
+        db_path = click.prompt("PINIT_DB_PATH", default="", show_default=False)
+
         # Write config file
         with open(config_file, "w") as f:
             f.write("# Pinit configuration\n")
             f.write(f"PINBOARD_API_TOKEN={api_token}\n")
             if model:
                 f.write(f"PINIT_MODEL={model}\n")
+            if db_path:
+                # Expand user path if provided
+                expanded_db_path = os.path.expanduser(db_path)
+                f.write(f"PINIT_DB_PATH={expanded_db_path}\n")
 
         # Set restrictive permissions
         config_file.chmod(0o600)
@@ -274,6 +285,15 @@ def config(init: bool) -> None:
         console.print("  [dim](set via PINIT_MODEL environment variable)[/dim]")
     else:
         console.print("  [dim](using default)[/dim]")
+
+    # Show database configuration
+    from .pinboard_client import ensure_database_initialized
+    db_path = ensure_database_initialized()
+    console.print(f"\n[bold]Database:[/bold] {db_path}")
+    if os.getenv("PINIT_DB_PATH"):
+        console.print("  [dim](set via PINIT_DB_PATH environment variable)[/dim]")
+    else:
+        console.print("  [dim](using default location)[/dim]")
 
     # Check for config files
     local_env = Path(".env")
@@ -319,20 +339,20 @@ def sync(dry_run: bool) -> None:
             sys.exit(1)
 
         # Perform sync
-        with console.status(f"[yellow]Syncing bookmarks{'(dry run)' if dry_run else ''}...[/yellow]"):
-            if dry_run:
-                console.print("[yellow]Dry run mode - sync functionality coming soon[/yellow]")
-                return
-
-            results = sync_all_bookmarks(api_token)
+        dry_run_suffix = " (dry run)" if dry_run else ""
+        with console.status(f"[yellow]Syncing bookmarks{dry_run_suffix}...[/yellow]"):
+            results = sync_all_bookmarks(api_token, dry_run=dry_run)
 
         # Report results
         if results.get('errors', 0) == 0:
-            console.print("\n[green]✓ Sync completed successfully![/green]")
+            success_msg = "✓ Sync preview completed!" if dry_run else "✓ Sync completed successfully!"
+            console.print(f"\n[green]{success_msg}[/green]")
             if 'local_to_remote' in results:
-                console.print(f"  Local → Remote: {results['local_to_remote']} bookmarks")
+                action = "Would sync" if dry_run else "Synced"
+                console.print(f"  Local → Remote: {action} {results['local_to_remote']} bookmarks")
             if 'remote_to_local' in results:
-                console.print(f"  Remote → Local: {results['remote_to_local']} bookmarks")
+                action = "Would sync" if dry_run else "Synced"
+                console.print(f"  Remote → Local: {action} {results['remote_to_local']} bookmarks")
         else:
             console.print(f"\n[red]✗ Sync completed with {results['errors']} errors[/red]")
             if 'error_message' in results:

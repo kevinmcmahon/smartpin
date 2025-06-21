@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 from pinboard_tools import BidirectionalSync, init_database
-from pinboard_tools.database.models import Database
 from pinboard_tools.sync.bidirectional import SyncDirection
 
 
@@ -15,17 +14,36 @@ def ensure_database_initialized(db_path: str | None = None) -> str:
     Ensure the pinboard-tools database is initialized.
 
     Args:
-        db_path: Path to SQLite database file (defaults to ~/.pinit/bookmarks.db)
+        db_path: Path to SQLite database file (uses resolution order if None)
 
     Returns:
         The database path used
+
+    Resolution order for database path:
+    1. Explicit db_path parameter
+    2. PINIT_DB_PATH environment variable
+    3. Default: ~/.pinit/bookmarks.db
     """
     if db_path is None:
-        config_dir = Path.home() / ".pinit"
-        config_dir.mkdir(exist_ok=True)
-        db_path = str(config_dir / "bookmarks.db")
+        # Check for configured database path
+        import os
+        configured_path = os.getenv("PINIT_DB_PATH")
+        if configured_path:
+            db_path = configured_path
+        else:
+            # Use default path
+            config_dir = Path.home() / ".pinit"
+            config_dir.mkdir(exist_ok=True)
+            db_path = str(config_dir / "bookmarks.db")
 
-    init_database(db_path)
+    # Ensure parent directory exists for the database
+    db_file = Path(db_path)
+    db_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Check if database exists, if not initialize it
+    if not db_file.exists():
+        init_database(db_path)
+
     return db_path
 
 
@@ -115,27 +133,31 @@ def add_bookmark_from_json(
     )
 
 
-def sync_all_bookmarks(api_token: str, db_path: str | None = None) -> dict[str, Any]:
+def sync_all_bookmarks(api_token: str, db_path: str | None = None, dry_run: bool = False) -> dict[str, Any]:
     """
     Perform a full bidirectional sync of all bookmarks.
 
     Args:
         api_token: Pinboard API token (username:token format)
         db_path: Path to SQLite database file (optional)
+        dry_run: If True, show what would be synced without making changes
 
     Returns:
         Dictionary with sync results including errors count
     """
     try:
         # Ensure database is initialized
-        db_path_used = ensure_database_initialized(db_path)
+        actual_db_path = ensure_database_initialized(db_path)
 
-        # Create database and sync client
-        db = Database(db_path_used)
+        # Import Database class directly to use specific path
+        from pinboard_tools.database.models import Database
+
+        # Create database session with specific path
+        db = Database(actual_db_path)
         sync = BidirectionalSync(db=db, api_token=api_token)
 
         # Perform full bidirectional sync
-        results = sync.sync(direction=SyncDirection.BIDIRECTIONAL)
+        results = sync.sync(direction=SyncDirection.BIDIRECTIONAL, dry_run=dry_run)
 
         return results
 
