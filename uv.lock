@@ -637,32 +637,14 @@ wheels = [
 [[package]]
 name = "pinboard-tools"
 version = "0.1.9"
-source = { editable = "../../../../projects/python/pinboard-tools" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
     { name = "rich" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.2.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0.0" },
-    { name = "requests", specifier = ">=2.31.0" },
-    { name = "rich", specifier = ">=14.0.0" },
-    { name = "rich", marker = "extra == 'cli'", specifier = ">=13.7.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4.0" },
-]
-provides-extras = ["dev", "cli"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "isort", specifier = ">=6.0.1" },
-    { name = "sphinx", specifier = ">=8.2.3" },
-    { name = "sphinx-autodoc-typehints", specifier = ">=3.2.0" },
-    { name = "sphinx-rtd-theme", specifier = ">=3.0.2" },
-    { name = "twine", specifier = ">=6.1.0" },
-    { name = "types-requests", specifier = ">=2.32.0.20250602" },
+sdist = { url = "https://files.pythonhosted.org/packages/24/1f/85660b70ccff7b5e75633df7ad7588e562d75593aeab058c2934f005348c/pinboard_tools-0.1.9.tar.gz", hash = "sha256:2e3c5f5851c1f871d331723df38ce89df6fb69afe01a0fe2504f120d109c60b1", size = 95883, upload-time = "2025-06-23T15:53:08.223Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/16/ba/f5bbe3d9c547b8e6f4a0c9033e4bfa81f6ceb9ba8cb3ac46d0aee0abfb8b/pinboard_tools-0.1.9-py3-none-any.whl", hash = "sha256:d99895e93cb85e1e9c598aa025dc3ffc3bc4f1ab7f91029f04c6f8b185c45f9a", size = 29650, upload-time = "2025-06-23T15:53:06.537Z" },
 ]
 
 [[package]]
@@ -981,7 +963,7 @@ wheels = [
 
 [[package]]
 name = "smartpin"
-version = "0.2.3"
+version = "0.2.4"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -1011,7 +993,7 @@ requires-dist = [
     { name = "llm", specifier = ">=0.25" },
     { name = "llm-anthropic", specifier = ">=0.16" },
     { name = "pinboard", specifier = ">=2.1.9" },
-    { name = "pinboard-tools", editable = "../../../../projects/python/pinboard-tools" },
+    { name = "pinboard-tools" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "rich", specifier = ">=14.0.0" },
 ]

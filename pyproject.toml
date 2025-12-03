@@ -93,6 +93,3 @@ no_implicit_reexport = true
 [[tool.mypy.overrides]]
 module = ["llm", "llm.*", "pinboard", "pinboard.*"]
 ignore_missing_imports = true
-
-[tool.uv.sources]
-pinboard-tools = { path = "../../../../projects/python/pinboard-tools", editable = true }
