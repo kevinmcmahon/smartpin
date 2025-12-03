@@ -27,6 +27,7 @@ def ensure_database_initialized(db_path: str | None = None) -> str:
     if db_path is None:
         # Check for configured database path
         import os
+
         configured_path = os.getenv("PINIT_DB_PATH")
         if configured_path:
             db_path = configured_path
@@ -133,7 +134,9 @@ def add_bookmark_from_json(
     )
 
 
-def sync_all_bookmarks(api_token: str, db_path: str | None = None, dry_run: bool = False) -> dict[str, Any]:
+def sync_all_bookmarks(
+    api_token: str, db_path: str | None = None, dry_run: bool = False
+) -> dict[str, Any]:
     """
     Perform a full bidirectional sync of all bookmarks.
 

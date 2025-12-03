@@ -244,7 +244,9 @@ def config(init: bool) -> None:
         model = click.prompt("PINIT_MODEL", default="", show_default=False)
 
         # Optionally get database path
-        console.print("\nOptionally, specify database location (press Enter for default).")
+        console.print(
+            "\nOptionally, specify database location (press Enter for default)."
+        )
         default_db_path = str(config_dir / "bookmarks.db")
         console.print(f"[dim]Default: {default_db_path}[/dim]")
         db_path = click.prompt("PINIT_DB_PATH", default="", show_default=False)
@@ -288,6 +290,7 @@ def config(init: bool) -> None:
 
     # Show database configuration
     from .pinboard_client import ensure_database_initialized
+
     db_path = ensure_database_initialized()
     console.print(f"\n[bold]Database:[/bold] {db_path}")
     if os.getenv("PINIT_DB_PATH"):
@@ -317,7 +320,9 @@ def config(init: bool) -> None:
 
 
 @cli.command()
-@click.option("--dry-run", is_flag=True, help="Show what would be synced without making changes")
+@click.option(
+    "--dry-run", is_flag=True, help="Show what would be synced without making changes"
+)
 def sync(dry_run: bool) -> None:
     """Sync all bookmarks between local database and Pinboard.
 
@@ -344,18 +349,28 @@ def sync(dry_run: bool) -> None:
             results = sync_all_bookmarks(api_token, dry_run=dry_run)
 
         # Report results
-        if results.get('errors', 0) == 0:
-            success_msg = "✓ Sync preview completed!" if dry_run else "✓ Sync completed successfully!"
+        if results.get("errors", 0) == 0:
+            success_msg = (
+                "✓ Sync preview completed!"
+                if dry_run
+                else "✓ Sync completed successfully!"
+            )
             console.print(f"\n[green]{success_msg}[/green]")
-            if 'local_to_remote' in results:
+            if "local_to_remote" in results:
                 action = "Would sync" if dry_run else "Synced"
-                console.print(f"  Local → Remote: {action} {results['local_to_remote']} bookmarks")
-            if 'remote_to_local' in results:
+                console.print(
+                    f"  Local → Remote: {action} {results['local_to_remote']} bookmarks"
+                )
+            if "remote_to_local" in results:
                 action = "Would sync" if dry_run else "Synced"
-                console.print(f"  Remote → Local: {action} {results['remote_to_local']} bookmarks")
+                console.print(
+                    f"  Remote → Local: {action} {results['remote_to_local']} bookmarks"
+                )
         else:
-            console.print(f"\n[red]✗ Sync completed with {results['errors']} errors[/red]")
-            if 'error_message' in results:
+            console.print(
+                f"\n[red]✗ Sync completed with {results['errors']} errors[/red]"
+            )
+            if "error_message" in results:
                 console.print(f"[red]Error: {results['error_message']}[/red]")
             sys.exit(1)
 
