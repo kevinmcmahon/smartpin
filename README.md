@@ -12,7 +12,7 @@
 
 - 🤖 **Automatic metadata extraction** - AI analyzes pages to extract title, description, and relevant tags
 - 🎯 **Smart tagging** - AI suggests contextually appropriate tags for better organization
-- 🔄 **Flexible AI models** - Supports Claude, GPT-4, Gemini, and other LLM providers
+- 🔄 **Flexible AI models** - Supports Claude, OpenAI, Gemini, and other LLM providers
 - ☁️ **Cloud-first storage** - Bookmarks saved directly to Pinboard.in for instant access anywhere
 - 🗄️ **Optional local database** - Offline access and advanced bookmark management via pinboard-tools
 - 🔄 **Bidirectional sync** - Keep local database and Pinboard.in perfectly synchronized
@@ -68,8 +68,8 @@ PINBOARD_API_TOKEN=your_username:your_token
 ANTHROPIC_API_KEY=your_anthropic_api_key  # For Claude models
 # OPENAI_API_KEY=your_openai_api_key     # For GPT models
 
-# Optional: specify model (defaults to anthropic/claude-sonnet-4-0)
-PINIT_MODEL=gpt-4  # or claude-opus-4-0, gpt-3.5-turbo, etc.
+# Optional: specify model (defaults to claude-opus-4.5)
+PINIT_MODEL=gpt-5  # or claude-opus-4.5, gpt-4.1, etc.
 ```
 
 ### Basic Usage
@@ -131,10 +131,10 @@ pinit config
 
 ```bash
 # Use a different AI model
-pinit add https://example.com --model gpt-4
+pinit add https://example.com --model gpt-5
 
-# Or use GPT-3.5 for faster/cheaper processing
-pinit add https://example.com --model gpt-3.5-turbo
+# Or use gpt-4.1-nano for faster/cheaper processing
+pinit add https://example.com --model gpt-4.1-nano
 
 # Check your configuration and database location
 pinit config
@@ -169,7 +169,7 @@ The application can optionally maintain a local SQLite database at `~/.pinit/boo
 
 The application uses the [LLM library](https://llm.datasette.io/) for flexible AI model integration:
 
-- **Default model**: `anthropic/claude-sonnet-4-0` (can be changed via `PINIT_MODEL`)
+- **Default model**: `claude-opus-4.5` (can be changed via `PINIT_MODEL`)
 - **Supported providers**: Anthropic Claude, OpenAI GPT, Google Gemini, and many others
 - **Easy model switching**: Change models without code modifications
 - **Required API keys** depend on your chosen provider:
@@ -182,17 +182,16 @@ The application uses the [LLM library](https://llm.datasette.io/) for flexible A
 
 | Provider | Popular Models | Environment Variable |
 |----------|---------------|---------------------|
-| OpenAI | gpt-4, gpt-4-turbo, gpt-3.5-turbo | OPENAI_API_KEY |
-| Anthropic | claude-sonnet-4-0, claude-opus-4-0 | ANTHROPIC_API_KEY |
-| Google | gemini-pro, gemini-ultra | GEMINI_API_KEY |
-| Cohere | command, command-light | COHERE_API_KEY |
+| OpenAI | gpt-5, gpt-4.5-preview, o4-mini, o3, gpt-4.1 | OPENAI_API_KEY |
+| Anthropic | claude-opus-4.5, claude-sonnet-4.5, claude-opus-4.1, claude-haiku-4.5 | ANTHROPIC_API_KEY |
+| Google | gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-flash-lite | GEMINI_API_KEY |
 | Others | Various | See [LLM docs](https://llm.datasette.io/en/stable/other-models.html) |
 
 Choose the model that best fits your needs:
 
-- **Speed**: GPT-3.5-turbo, Claude Sonnet, Gemini Pro
-- **Quality**: GPT-4, Claude Opus, Gemini Ultra
-- **Cost**: GPT-3.5-turbo, Cohere Command-light
+- **Speed**: gpt-4.1-nano, claude-haiku-4.5, gemini-2.5-flash-lite
+- **Quality**: gpt-5, claude-opus-4.5, gemini-3-pro-preview
+- **Cost**: gpt-4.1-nano, claude-haiku-4.5, gemini-2.5-flash-lite
 
 ## 🛠️ Development
 
@@ -246,7 +245,7 @@ make clean     # Remove cache files
 ### Key Features Enabled by Dependencies
 
 - **pinboard-tools**: Local SQLite database, bidirectional sync, advanced bookmark management
-- **llm**: Support for Claude, GPT-4, Gemini, and other AI providers
+- **llm**: Support for Claude, OpenAI, Gemini, and other AI providers
 - **rich**: Beautiful terminal output with progress indicators and formatting
 
 ## 🤝 Contributing
