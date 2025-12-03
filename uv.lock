@@ -432,7 +432,7 @@ wheels = [
 
 [[package]]
 name = "openai"
-version = "1.88.0"
+version = "1.90.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -444,9 +444,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5a/ea/bbeef604d1fe0f7e9111745bb8a81362973a95713b28855beb9a9832ab12/openai-1.88.0.tar.gz", hash = "sha256:122d35e42998255cf1fc84560f6ee49a844e65c054cd05d3e42fda506b832bb1", size = 470963, upload-time = "2025-06-17T05:04:45.856Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2d/30/0bdb712f5e25e823a76828136de6043f28bd69363886c417e05d7021420e/openai-1.90.0.tar.gz", hash = "sha256:9771982cdd5b6631af68c6a603da72ed44cd2caf73b49f717a72b71374bc565b", size = 471896, upload-time = "2025-06-20T20:22:18.349Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/03/ef68d77a38dd383cbed7fc898857d394d5a8b0520a35f054e7fe05dc3ac1/openai-1.88.0-py3-none-any.whl", hash = "sha256:7edd7826b3b83f5846562a6f310f040c79576278bf8e3687b30ba05bb5dff978", size = 734293, upload-time = "2025-06-17T05:04:43.858Z" },
+    { url = "https://files.pythonhosted.org/packages/bd/e3/0d7a2ee7ae7293e794e7945ffeda942ff5e3a94de24be27cc3eb5ba6c188/openai-1.90.0-py3-none-any.whl", hash = "sha256:e5dcb5498ea6b42fec47546d10f1bcc05fb854219a7d953a5ba766718b212a02", size = 734638, upload-time = "2025-06-20T20:22:16.211Z" },
 ]
 
 [[package]]
@@ -468,15 +468,33 @@ wheels = [
 
 [[package]]
 name = "pinboard-tools"
-version = "0.1.7"
-source = { registry = "https://pypi.org/simple" }
+version = "0.1.8"
+source = { editable = "../../../../projects/python/pinboard-tools" }
 dependencies = [
     { name = "requests" },
     { name = "rich" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/98/67/2057295d37fa5060f61c3e6bce892be832c52137fa9324cb345ca06c2a11/pinboard_tools-0.1.7.tar.gz", hash = "sha256:f2e4a11bd19c0eb191fe7b40d973f2d124b5846fb3346f108f4ff8ab81ab65a7", size = 91522, upload-time = "2025-06-19T20:36:45.052Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d5/64/19c7ec7f53953c1e17dd574a9ff0e3e0f31fef7ccdc180b0bedd49713a70/pinboard_tools-0.1.7-py3-none-any.whl", hash = "sha256:59871b3bdde1f6bb5b4aeca6fd370aac75ab5f1e0192c556732dc188711e244d", size = 27710, upload-time = "2025-06-19T20:36:43.543Z" },
+
+[package.metadata]
+requires-dist = [
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.2.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "requests", specifier = ">=2.31.0" },
+    { name = "rich", specifier = ">=14.0.0" },
+    { name = "rich", marker = "extra == 'cli'", specifier = ">=13.7.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4.0" },
+]
+provides-extras = ["dev", "cli"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "isort", specifier = ">=6.0.1" },
+    { name = "sphinx", specifier = ">=8.2.3" },
+    { name = "sphinx-autodoc-typehints", specifier = ">=3.2.0" },
+    { name = "sphinx-rtd-theme", specifier = ">=3.0.2" },
+    { name = "twine", specifier = ">=6.1.0" },
+    { name = "types-requests", specifier = ">=2.32.0.20250602" },
 ]
 
 [[package]]
@@ -772,7 +790,7 @@ requires-dist = [
     { name = "llm", specifier = ">=0.25" },
     { name = "llm-anthropic", specifier = ">=0.16" },
     { name = "pinboard", specifier = ">=2.1.9" },
-    { name = "pinboard-tools", specifier = ">=0.1.3" },
+    { name = "pinboard-tools", editable = "../../../../projects/python/pinboard-tools" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "rich", specifier = ">=14.0.0" },
 ]

@@ -34,7 +34,7 @@ dependencies = [
     "llm>=0.25",
     "llm-anthropic>=0.16",
     "pinboard>=2.1.9",
-    "pinboard-tools>=0.1.3",
+    "pinboard-tools",
     "python-dotenv>=1.1.0",
     "rich>=14.0.0",
 ]
@@ -93,3 +93,6 @@ no_implicit_reexport = true
 [[tool.mypy.overrides]]
 module = ["llm", "llm.*", "pinboard", "pinboard.*"]
 ignore_missing_imports = true
+
+[tool.uv.sources]
+pinboard-tools = { path = "../../../../projects/python/pinboard-tools", editable = true }

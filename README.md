@@ -96,11 +96,12 @@ pinit add https://example.com --json
 ### Standard Bookmark Addition
 
 ```bash
-$ pinit add https://example.com/ai-software-development
+pinit add https://example.com/ai-software-development
 ```
 
 **Output:**
-```
+
+```bash
 ┌─ Extracted Bookmark ─────────────────────────────────┐
 │ Title: How to Build Better Software with AI          │
 │ URL: https://example.com/ai-software-development      │
@@ -233,6 +234,7 @@ make clean     # Remove cache files
 ## 📦 Dependencies
 
 ### Core Libraries
+
 - **CLI Framework**: `click` - Command-line interface creation
 - **Terminal UI**: `rich` - Beautiful terminal formatting
 - **AI Integration**: `llm` - Universal LLM library for multiple providers
@@ -242,6 +244,7 @@ make clean     # Remove cache files
 - **Templating**: `jinja2` - Prompt template rendering
 
 ### Key Features Enabled by Dependencies
+
 - **pinboard-tools**: Local SQLite database, bidirectional sync, advanced bookmark management
 - **llm**: Support for Claude, GPT-4, Gemini, and other AI providers
 - **rich**: Beautiful terminal output with progress indicators and formatting

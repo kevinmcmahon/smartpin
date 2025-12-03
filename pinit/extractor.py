@@ -13,7 +13,7 @@ from jinja2 import Template
 class PinboardBookmarkExtractor:
     """Extracts bookmark metadata from web pages using Claude Sonnet."""
 
-    def __init__(self, model_name: str = "anthropic/claude-sonnet-4-0") -> None:
+    def __init__(self, model_name: str = "claude-opus-4.5") -> None:
         self.model = llm.get_model(model_name)
         self.client = httpx.Client(
             timeout=30.0,
